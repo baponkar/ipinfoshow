@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comment Section</title>
+    <script>
+        function postComment() {
+            var name = document.getElementById("name").value;
+            var comment = document.getElementById("comment").value;
+            var currentTime = new Date().toLocaleString();
+
+            var commentData = name + "," + comment + "," + currentTime + "\n";
+
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "saveComment.php", true);
+            xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xhr.send("commentData=" + encodeURIComponent(commentData));
+
+            // Update comments on the page
+            retrieveComments();
+        }
+
+        function retrieveComments() {
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    document.getElementById("comments").innerHTML = xhr.responseText;
+                }
+            };
+            xhr.open("GET", "comments.csv", true);
+            xhr.send();
+        }
+
+        // Initial retrieval on page load
+        window.onload = retrieveComments;
+    </script>
+</head>
+<body>
+    <h1>Comment Section</h1>
+
+    <div>
+        <label for="name">Name:</label>
+        <input type="text" id="name" required>
+    </div>
+
+    <div>
+        <label for="comment">Comment:</label>
+        <textarea id="comment" rows="4" required></textarea>
+    </div>
+
+    <button onclick="postComment()">Post Comment</button>
+
+    <div id="comments">
+        <!-- Comments will be displayed here -->
+    </div>
+</body>
+</html>
